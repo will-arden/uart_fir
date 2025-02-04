@@ -14,8 +14,6 @@ Each of these modules is dedicated a VHDL design source.
 ### Brief Note
 Since this mini-project is still under development, there may be discrepencies between the documentation and the solution provided.
 
-![Structural Overview](meta/uart_packet.jpg)
-
 ## uart_rx
 This module is designed to behave as a **UART receiver**. The synchronicity is given by the global `clk` signal. The module has the following generic property, which may be configured on instantiation:
 * **N**: number of bits per UART packet
@@ -40,6 +38,12 @@ A counter counts down from **N**; when it expires, a new value is ready to be tr
 
 #### Outputs:
 * Serial output data `output`
+
+---
+### UART Packet Protocol
+![UART Packet Protocol](meta/uart_packet.jpg)
+
+---
 
 ## fir
 The core of this design is the **FIR filter** which accepts a stream of inputs, multiplies the inputs by a **window** of coefficients and sums the results to produce a stream of outputs. This module has the following generic properties:
