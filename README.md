@@ -71,3 +71,11 @@ When one of these commands is received, the module **reads the data provided in 
 * Input data stream `input[N-1:0]`
 #### Outputs:
 * Output data stream `output[N-1:0]`
+
+### FIR State Diagram
+![FIR State Diagram](meta/state_diagram.jpg)
+
+---
+
+Will Arden
+February 2025
