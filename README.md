@@ -44,7 +44,7 @@ A counter counts down from **N**; when it expires, a new value is ready to be tr
 ![UART Protocol](meta/uart_protocol.jpg)
 
 ### UART Packet Format
-![UART Packet Format(meta/uart_packet.jpg)
+![UART Packet Format](meta/uart_packet.jpg)
 
 ---
 
