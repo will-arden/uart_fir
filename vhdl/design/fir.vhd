@@ -12,8 +12,6 @@ entity fir is
     );
     port (
         rst, clk    : in    std_logic;
-        ctrl_en     : in    std_logic;
-        ctrl_data   : in    std_logic_vector(N-1 downto 0);
         input       : in    std_logic_vector(N-1 downto 0);
         output      : out   std_logic_vector(N-1 downto 0)
     );
@@ -68,38 +66,45 @@ architecture behav of fir is
 begin
 
     -- State excitation
-    state_proc : process(rst, buf, state) is
+    state_proc : process(rst, clk, input, state) is
     begin
-        if(rst = '1') then      state <= IDLE;                      -- Reset state
-        elsif(state = IDLE and buf(0)(7 downto 0) = x"AA") then     -- Detect command
-            state <= BUF_READ;                                          -- Read to buffer
-        elsif(state = IDLE and buf(0)(7 downto 0) = x"BB") then     -- Detect command
-            state <= WINDOW_READ;                                       -- Read to window
-        elsif(state = BUF_READ) then
+        if(rst = '1') then      state <= IDLE;
+        elsif(rising_edge(clk)) then
+        
+            case state is
+                when IDLE =>                                                        -- IDLE
+                    if(input(7 downto 0) = x"AA") then      state <= BUF_READ;          -- Excite to BUF_READ
+                    elsif(input(7 downto 0) = x"BB") then   state <= WINDOW_READ;       -- Excite to WINDOW_READ
+                    end if;
+                when BUF_READ =>                                                    -- BUF_READ
+                    state <= IDLE;                                                      -- Return to IDLE
+                when WINDOW_READ =>                                                 -- WINDOW_READ
+                    state <= IDLE;                                                      -- Return to IDLE
+                when others =>                                                      -- Default case (invalid)
+                    state <= IDLE;                                                      -- Return to IDLE
+            end case;
+        
         end if;
     end process;
 
-    -- Allow the window buffer to be written to
-    ctrl_proc : process(rst, clk) is
+    -- Act on UART command
+    action_proc : process(rst, clk, input, state) is
     begin
-        if(rst = '1') then          window <= zero_init(window);        -- Clear window on reset
-        elsif(rising_edge(clk) and ctrl_en = '1') then
-            window      <= shift_buffer(window);
-            window(0)   <= ctrl_data;
+        if(rst = '1') then                              -- Upon reset
+            buf     <= zero_init(buf);                      -- Empty the input buffer
+            window  <= zero_init(window);                   -- Empty the window
+        elsif(rising_edge(clk)) then
+            if(state = BUF_READ) then                   -- BUF_READ state
+                buf     <= shift_buffer(buf);               -- Shift the buffer along
+                buf(0)  <= input;                           -- Insert the current input
+            elsif(state = WINDOW_READ) then             -- WINDOW_READ state
+                window      <= shift_buffer(window);        -- Shift the coefficients along
+                window(0)   <= input;                       -- Insert the new coefficient
+            end if;
         end if;
     end process;
     
-
-    -- FIFO buffer storing recent inputs
-    buf_proc : process(rst, clk) is
-    begin
-        if(rst = '1') then
-            buf <= zero_init(buf);
-        elsif(rising_edge(clk)) then
-            buf     <= shift_buffer(buf);
-            buf(0)  <= input;
-        end if;
-    end process;
+    
     
     -- Compute the output
     conv_proc : process(rst, clk) is
