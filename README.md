@@ -40,8 +40,11 @@ A counter counts down from **N**; when it expires, a new value is ready to be tr
 * Serial output data `output`
 
 ---
-### UART Packet Protocol
-![UART Packet Protocol](meta/uart_packet.jpg)
+### UART Protocol
+![UART Protocol](meta/uart_protocol.jpg)
+
+### UART Packet Format
+![UART Packet Format(meta/uart_packet.jpg)
 
 ---
 
