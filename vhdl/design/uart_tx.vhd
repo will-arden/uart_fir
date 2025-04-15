@@ -22,7 +22,7 @@ architecture behav of uart_tx is
 
 begin
 
-    sync_proc : process(rst, clk, input) is
+    sync_proc : process(clk) is
     begin
         if(rst = '1') then
             input_reg <= (others=>'0');
