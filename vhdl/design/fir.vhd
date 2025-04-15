@@ -66,7 +66,7 @@ architecture behav of fir is
 begin
 
     -- State excitation
-    state_proc : process(clk, input, state) is
+    state_proc : process(clk) is
     begin
         if(rst = '1') then      state <= IDLE;
         elsif(rising_edge(clk)) then
