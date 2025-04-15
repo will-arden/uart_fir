@@ -42,7 +42,7 @@ architecture behav of uart_rx is
 begin
 
     -- Output register control
-    reg_proc : process (rst, clk) is
+    reg_proc : process (clk) is
     begin
         if(rst = '1') then
             data_reg <= (others=>'0');
